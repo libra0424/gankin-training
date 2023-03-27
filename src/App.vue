@@ -1,28 +1,53 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <ScoreBoard :score="score" v-if="gameState !== 'stopped'" />
+    <MovingSphere
+      v-if="gameState === 'playing'"
+      @update-score="updateScore"
+      @game-over="handleGameOver"
+    />
+    <StartButton v-if="gameState === 'stopped'" @start-game="startGame" />
+    <GameOver
+      v-if="gameState === 'over'"
+      :finalScore="score"
+      @restart-game="restartGame"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import StartButton from './components/StartButton.vue';
+import ScoreBoard from './components/ScoreBoard.vue';
+import MovingSphere from './components/MovingSphere.vue';
+import GameOver from './components/GameOver.vue';
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    StartButton,
+    ScoreBoard,
+    MovingSphere,
+    GameOver
+  },
+  data() {
+    return {
+      gameState: 'stopped',
+      score: 0,
+    };
+  },
+  methods: {
+    startGame() {
+      this.gameState = 'playing';
+    },
+    updateScore() {
+      this.score += 1;
+    },
+    handleGameOver() {
+      this.gameState = 'over';
+    },
+    restartGame() {
+      this.score = 0;
+      this.gameState = 'stopped';
+    },
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
